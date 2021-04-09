@@ -14,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
 
-    public final static String TAG = "WIFIDIRECTP2P";
+    public final static String TAG = "WIFIDIRECTP2PA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         }
         channel = manager.initialize(this, getMainLooper(), null);
         receiver = new WifiDirectBR(manager, channel, this);
-
         intentFilter = new IntentFilter();
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(MainActivity.this, "Buscando dispositivos...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Buscando dispositivos...", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
                 lvPeers.setAdapter(adapter);
+                Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_LONG).show();
             }
             if(peers.size() == 0){
                 Toast.makeText(MainActivity.this, "No se encontraron dispositivos!", Toast.LENGTH_LONG).show();
