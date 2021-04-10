@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
-    private boolean esHost = false;
-    private boolean esCliente = false;
+    public boolean esHost = false;
+    public boolean esCliente = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,10 +171,10 @@ public class MainActivity extends AppCompatActivity {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
                 lvPeers.setAdapter(adapter);
 
-                Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_SHORT).show();
             }
             if(peers.size() == 0){
-                Toast.makeText(MainActivity.this, "No se encontraron dispositivos!", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "No se encontraron dispositivos!", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -189,12 +189,14 @@ public class MainActivity extends AppCompatActivity {
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
                 lblEstado.setText("Host");
                 esHost = true;
+                esCliente = false;
                 ServerClass serverClass = new ServerClass(getApplicationContext(), MainActivity.this); /*Cómo recibo la clase main?*/
                 serverClass.execute();
             }else if(wifiP2pInfo.groupFormed){
                 lblEstado.setText("Cliente");
                 hostAddress = groupOwnerAddress.getHostAddress();
                 esCliente = true;
+                esHost = false;
             }
         }
     };
