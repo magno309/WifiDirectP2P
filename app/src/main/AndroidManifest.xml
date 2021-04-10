@@ -30,7 +30,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.melecio.wifidirectp2p"
+            android:authorities="com.melecio.wifidirectp2p.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
