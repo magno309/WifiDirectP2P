@@ -13,6 +13,9 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Clase para crear la comunicación de socket entre cliente y servidor
+ */
 public class ServerClass extends AsyncTask<Void, Void, String> {
 
     Socket socket;
@@ -49,6 +52,7 @@ public class ServerClass extends AsyncTask<Void, Void, String> {
         }
     }
 
+    //Obtener la Uri de la imagen recibida para mostrarla al usuario
     @Override
     protected void onPostExecute(String result) {
         if(result != null){
@@ -59,6 +63,7 @@ public class ServerClass extends AsyncTask<Void, Void, String> {
         }
     }
 
+    //Escribir archivo recibido en arreglo de bytes para guardarlo
     public static boolean copyFile(InputStream inputStream, OutputStream out) {
         byte buf[] = new byte[1024];
         int len;

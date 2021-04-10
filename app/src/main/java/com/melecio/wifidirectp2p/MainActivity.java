@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     Boolean IsWifiP2pEnabled;
 
-    public final static String TAG = "WIFIDIRECTP2PA";
-    public static final String ACTION_SEND_FILE = "com.melecio.wifidirectp2p.SEND_FILE";
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
@@ -74,25 +72,27 @@ public class MainActivity extends AppCompatActivity {
         imgPrev = findViewById(R.id.imgPrev);
         lblEstado = findViewById(R.id.lblEstado);
 
+        //Obtener una instancia de WifiP2pManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         }
+        //Obtener un WifiP2pManager.Channel para conectar la aplicación al marco de trabajo de P2P Wi-Fi
         channel = manager.initialize(this, getMainLooper(), null);
+        //instancia del receptor de emisión para los eventos de WifiP2p
         receiver = new WifiDirectBR(manager, channel, this);
+
+        //Creación de filtro de intents y adición de los mismos intents que busca el receptor de emisión
         intentFilter = new IntentFilter();
-        // Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        // Indicates a change in the list of available peers.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        // Indicates the state of Wi-Fi P2P connectivity has changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         btnSeleccionar.setOnClickListener(v -> {
             abrirGaleria();
         });
 
+        //Método para detectar pares al presionar el botón de descubrir
         btnDescubrir.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Método para enviar la imagen utilizando un IntentService
         btnEnviar.setOnClickListener(v -> {
             if(esCliente && imageUri!=null) {
                 Intent enviarImagen = new Intent(MainActivity.this, FileTransferService.class);
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Método para conectarse con el Peer seleccionado en la ListView
         lvPeers.setOnItemClickListener((adapterView, view, i, l) -> {
             final WifiP2pDevice device = deviceArray[i];
             WifiP2pConfig config = new WifiP2pConfig();
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    //Se ejecuta después de seleccionar una imagen y obtiene su Uri para mostrarla y mandarla después
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    //Notifica cuando hay una lista de pares disponible; se obtiene y se muestra en el ListView
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
@@ -170,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
                 lvPeers.setAdapter(adapter);
-
                 Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_SHORT).show();
             }
             if(peers.size() == 0){
@@ -182,16 +184,17 @@ public class MainActivity extends AppCompatActivity {
 
     String hostAddress;
 
+    //Método para obeter la información de la conexión
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
             final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
                 lblEstado.setText("Host");
+                ServerClass serverClass = new ServerClass(getApplicationContext(), MainActivity.this);
+                serverClass.execute();
                 esHost = true;
                 esCliente = false;
-                ServerClass serverClass = new ServerClass(getApplicationContext(), MainActivity.this); /*Cómo recibo la clase main?*/
-                serverClass.execute();
             }else if(wifiP2pInfo.groupFormed){
                 lblEstado.setText("Cliente");
                 hostAddress = groupOwnerAddress.getHostAddress();
