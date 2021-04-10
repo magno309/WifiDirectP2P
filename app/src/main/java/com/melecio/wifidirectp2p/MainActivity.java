@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
 
+    Boolean IsWifiP2pEnabled;
+
     public final static String TAG = "WIFIDIRECTP2PA";
 
     @Override
@@ -59,9 +61,13 @@ public class MainActivity extends AppCompatActivity {
         channel = manager.initialize(this, getMainLooper(), null);
         receiver = new WifiDirectBR(manager, channel, this);
         intentFilter = new IntentFilter();
+        // Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        // Indicates a change in the list of available peers.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        // Indicates the state of Wi-Fi P2P connectivity has changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         btnSeleccionar.setOnClickListener(v -> {
@@ -113,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
                 lvPeers.setAdapter(adapter);
+
                 Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_LONG).show();
             }
             if(peers.size() == 0){
@@ -131,5 +138,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+    }
+
+    public void setIsWifiP2pEnabled(boolean b) {
+        IsWifiP2pEnabled = b;
     }
 }
