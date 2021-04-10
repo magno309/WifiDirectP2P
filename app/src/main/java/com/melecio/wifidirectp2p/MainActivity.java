@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-            if(!wifiP2pDeviceList.getDeviceList().equals(peers)){
+            if(wifiP2pDeviceList.getDeviceList().size()!=peers.size()){
                 peers.clear();
                 peers.addAll(wifiP2pDeviceList.getDeviceList());
                 deviceNameArray = new String[wifiP2pDeviceList.getDeviceList().size()];
