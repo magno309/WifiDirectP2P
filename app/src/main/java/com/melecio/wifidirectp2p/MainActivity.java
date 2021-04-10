@@ -2,11 +2,14 @@ package com.melecio.wifidirectp2p;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.InetAddresses;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnSeleccionar = findViewById(R.id.btnSeleccionar);
-        btnDescubrir= findViewById(R.id.btnDescubrir);
+        btnDescubrir = findViewById(R.id.btnDescubrir);
         btnEnviar = findViewById(R.id.btnEnviar);
         lvPeers = findViewById(R.id.lvPeers);
         imgPrev = findViewById(R.id.imgPrev);
@@ -91,19 +94,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnDescubrir.setOnClickListener(v -> {
-            manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    lblEstado.setText("Buscando...");
-                    Toast.makeText(MainActivity.this, "Buscando dispositivos...", Toast.LENGTH_SHORT).show();
-                }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        lblEstado.setText("Buscando...");
+                        Toast.makeText(MainActivity.this, "Buscando dispositivos...", Toast.LENGTH_SHORT).show();
+                    }
 
-                @Override
-                public void onFailure(int i) {
-                    lblEstado.setText("Error");
-                    Toast.makeText(MainActivity.this, "Error al buscar dispositivos...", Toast.LENGTH_LONG).show();
-                }
-            });
+                    @Override
+                    public void onFailure(int i) {
+                        lblEstado.setText("Error");
+                        Toast.makeText(MainActivity.this, "Error al buscar dispositivos...", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         });
 
         btnEnviar.setOnClickListener(v -> {

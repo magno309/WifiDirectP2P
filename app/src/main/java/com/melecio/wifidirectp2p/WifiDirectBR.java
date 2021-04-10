@@ -1,8 +1,10 @@
 package com.melecio.wifidirectp2p;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -11,10 +13,12 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class WifiDirectBR extends BroadcastReceiver{
+public class WifiDirectBR extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -46,7 +50,9 @@ public class WifiDirectBR extends BroadcastReceiver{
             // that.
             //Toast.makeText(mActivity, "Entra al PEERS_CHANGED_ACTION", Toast.LENGTH_SHORT).show();
             if (mManager != null) {
-                mManager.requestPeers(mChannel, mActivity.peerListListener);
+                if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mManager.requestPeers(mChannel, mActivity.peerListListener);
+                }
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
