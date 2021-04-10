@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
