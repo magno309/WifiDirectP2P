@@ -44,7 +44,7 @@ public class WifiDirectBR extends BroadcastReceiver{
 
             // The peer list has changed! We should probably do something about
             // that.
-            Toast.makeText(mActivity, "Entra al PEERS_CHANGED_ACTION", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mActivity, "Entra al PEERS_CHANGED_ACTION", Toast.LENGTH_SHORT).show();
             if (mManager != null) {
                 mManager.requestPeers(mChannel, mActivity.peerListListener);
             }

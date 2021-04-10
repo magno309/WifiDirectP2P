@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
     Boolean IsWifiP2pEnabled;
 
     public final static String TAG = "WIFIDIRECTP2PA";
+    public static final String ACTION_SEND_FILE = "com.melecio.wifidirectp2p.SEND_FILE";
+    public static final String EXTRAS_FILE_PATH = "file_url";
+    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
+    public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
+    private boolean esHost = false;
+    private boolean esCliente = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +94,26 @@ public class MainActivity extends AppCompatActivity {
             manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
+                    lblEstado.setText("Buscando...");
                     Toast.makeText(MainActivity.this, "Buscando dispositivos...", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(int i) {
+                    lblEstado.setText("Error");
                     Toast.makeText(MainActivity.this, "Error al buscar dispositivos...", Toast.LENGTH_LONG).show();
                 }
             });
+        });
+
+        btnEnviar.setOnClickListener(v -> {
+            if(esCliente) {
+                Intent enviarImagen = new Intent(MainActivity.this, FileTransferService.class);
+                enviarImagen.putExtra(EXTRAS_FILE_PATH, imageUri.getPath());
+                enviarImagen.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, hostAddress);
+                enviarImagen.putExtra(EXTRAS_GROUP_OWNER_PORT, 8888);
+                startService(enviarImagen);
+            }
         });
 
         lvPeers.setOnItemClickListener((adapterView, view, i, l) -> {
@@ -156,14 +175,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    String hostAddress;
+
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
             final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
                 lblEstado.setText("Host");
+                esHost = true;
+                ServerClass serverClass = new ServerClass(getApplicationContext(), MainActivity.this); /*Cómo recibo la clase main?*/
+                serverClass.execute();
             }else if(wifiP2pInfo.groupFormed){
                 lblEstado.setText("Cliente");
+                hostAddress = groupOwnerAddress.getHostAddress();
+                esCliente = true;
             }
         }
     };
