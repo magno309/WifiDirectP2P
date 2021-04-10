@@ -16,26 +16,6 @@
         android:layout_height="wrap_content"
         android:text="@string/lblEstado" />
 
-    <ImageView
-        android:id="@+id/imgPrev"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-
-        android:contentDescription="@string/imgPrev"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <Button
-        android:id="@+id/btnSeleccionar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnSeleccionar" />
-
-    <Button
-        android:id="@+id/btnEnviar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnEnviar" />
-
     <Button
         android:id="@+id/btnDescubrir"
         android:layout_width="match_parent"
@@ -45,7 +25,27 @@
     <ListView
         android:id="@+id/lvPeers"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="140dp"
         android:background="@android:color/holo_blue_light" />
+
+    <Button
+        android:id="@+id/btnSeleccionar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnSeleccionar" />
+
+    <ImageView
+        android:id="@+id/imgPrev"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+
+        android:contentDescription="@string/imgPrev"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/btnEnviar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnEnviar" />
 
 </LinearLayout>

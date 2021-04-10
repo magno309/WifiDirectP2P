@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.Nullable;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +36,7 @@ public class FileTransferService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Context context = getApplicationContext();
             String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
+            Log.d("FTSC", "URI - " + fileUri);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);

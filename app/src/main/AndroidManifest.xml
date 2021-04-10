@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".FileTransferService"/>
+        <service android:enabled="true" android:name=".FileTransferService"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

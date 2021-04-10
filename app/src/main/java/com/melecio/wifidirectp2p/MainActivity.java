@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnEnviar.setOnClickListener(v -> {
-            if(esCliente) {
+            if(esCliente && imageUri!=null) {
                 Intent enviarImagen = new Intent(MainActivity.this, FileTransferService.class);
-                enviarImagen.putExtra(EXTRAS_FILE_PATH, imageUri.getPath());
+                enviarImagen.putExtra(EXTRAS_FILE_PATH, imageUri.toString());
                 enviarImagen.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, hostAddress);
                 enviarImagen.putExtra(EXTRAS_GROUP_OWNER_PORT, 8888);
                 startService(enviarImagen);
