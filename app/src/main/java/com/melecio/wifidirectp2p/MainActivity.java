@@ -7,20 +7,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.InetAddresses;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnSeleccionar, btnDescubrir, btnEnviar;
     ImageView imgPrev;
     ListView lvPeers;
+    TextView lblEstado;
 
     WifiP2pManager manager;
     WifiP2pManager.Channel channel;
@@ -53,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         btnSeleccionar = findViewById(R.id.btnSeleccionar);
         btnDescubrir= findViewById(R.id.btnDescubrir);
         btnEnviar = findViewById(R.id.btnEnviar);
+        lvPeers = findViewById(R.id.lvPeers);
         imgPrev = findViewById(R.id.imgPrev);
+        lblEstado = findViewById(R.id.lblEstado);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -88,6 +97,24 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
+        lvPeers.setOnItemClickListener((adapterView, view, i, l) -> {
+            final WifiP2pDevice device = deviceArray[i];
+            WifiP2pConfig config = new WifiP2pConfig();
+            config.deviceAddress = device.deviceAddress;
+
+            manager.connect(channel, config, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(getApplicationContext(), "Conectado a " + device.deviceName, Toast.LENGTH_LONG).show();
+
+                }
+                @Override
+                public void onFailure(int i) {
+                    Toast.makeText(getApplicationContext(), "Error al conectar!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
     }
 
     private void abrirGaleria() {
@@ -113,17 +140,30 @@ public class MainActivity extends AppCompatActivity {
                 peers.addAll(wifiP2pDeviceList.getDeviceList());
                 deviceNameArray = new String[wifiP2pDeviceList.getDeviceList().size()];
                 deviceArray = new WifiP2pDevice[wifiP2pDeviceList.getDeviceList().size()];
-                for(int i=0;i<peers.size();i++){
+                for(int i=0;i<wifiP2pDeviceList.getDeviceList().size();i++){
                     deviceNameArray[i] = peers.get(i).deviceName;
                     deviceArray[i] = peers.get(i);
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceNameArray);
                 lvPeers.setAdapter(adapter);
 
                 Toast.makeText(MainActivity.this, "Dispositivos encontrados -> " + peers.size(), Toast.LENGTH_LONG).show();
             }
             if(peers.size() == 0){
                 Toast.makeText(MainActivity.this, "No se encontraron dispositivos!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+    };
+
+    WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+        @Override
+        public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+            final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
+            if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
+                lblEstado.setText("Host");
+            }else if(wifiP2pInfo.groupFormed){
+                lblEstado.setText("Cliente");
             }
         }
     };

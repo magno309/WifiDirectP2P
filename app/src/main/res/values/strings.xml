@@ -18,4 +18,5 @@
     <string name="btnEnviar">Enviar</string>
     <string name="btnSeleccionar">Seleccionar imagen...</string>
     <string name="imgPrev">Imagen seleccionada</string>
+    <string name="lblEstado">Estado del dispositivo</string>
 </resources>

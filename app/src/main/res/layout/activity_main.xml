@@ -10,6 +10,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/lblEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lblEstado" />
+
     <ImageView
         android:id="@+id/imgPrev"
         android:layout_width="match_parent"

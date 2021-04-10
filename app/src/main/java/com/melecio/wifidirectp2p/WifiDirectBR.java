@@ -3,6 +3,7 @@ package com.melecio.wifidirectp2p;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -34,6 +35,7 @@ public class WifiDirectBR extends BroadcastReceiver{
             // the Activity.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                Toast.makeText(mActivity, "WiFi encendido!", Toast.LENGTH_SHORT).show();
                 mActivity.setIsWifiP2pEnabled(true);
             } else {
                 mActivity.setIsWifiP2pEnabled(false);
@@ -51,7 +53,16 @@ public class WifiDirectBR extends BroadcastReceiver{
 
             // Connection state changed! We should probably do something about
             // that.
+            if(mManager == null){
+                return;
+            }
 
+            NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            if(networkInfo.isConnected()){
+                mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
+            }else{
+                mActivity.lblEstado.setText("Dispositivo desconectado");
+            }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
 
         }
